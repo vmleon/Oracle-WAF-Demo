@@ -10,6 +10,8 @@ Five reasons to have Oracle WAF protecting your system.
 4. Managed services ease your burden.
 5. They have low total cost of ownership.
 
+Oracle Cloud Infrastructure WAF employs an intelligent DNS data-driven algorithm that determines the best global point of presence (POP) to serve a given user in real time. As a result, users are routed around global network issues and potential latency while offering the best possible uptime and service levels.
+
 ## Introduction
 
 - **HTTP protection** against malicious and unwanted Internet traffic: Cross-Site Scripting (**XSS**), **SQL Injection** and others **OWASP**-defined vulnerabilities.
@@ -39,6 +41,8 @@ Five reasons to have Oracle WAF protecting your system.
 - Inspect logs to make sure there is **no false positives**
 - Enable **blocking capabilities** to WAF to be fully protected
 
+![WAF schema](images/waf.png)
+
 ## Lab 100: Create WAF Policy
 
 From the Wec Console
@@ -55,6 +59,14 @@ Fill out the details
 - Additions Domains: any additional domain, for example api\.example\.com
 - Origin Name: descriptive (and unique name)
 - URI: IPv4 address or fully qualified domain name
+
+**TODO** Add HTTPS security.
+
+**TODO** Update DNS with CNAME.
+
+**TODO** Test and check logs.
+
+**TODO** Enable protection.
 
 ## Price
 
