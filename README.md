@@ -60,6 +60,15 @@ Fill out the details
 - Origin Name: descriptive (and unique name)
 - URI: IPv4 address or fully qualified domain name
 
+Wait for the WAF Policy to be active, it might take few minutes. Be patient.
+![Active WAF policy](./images/04.png)
+
+Explore the menu on the bottom letf part of the WAF policy page to see Metrics
+![WAF metrics](./images/05.png)
+
+Origin Management
+![WAF metrics](./images/06.png)
+
 ## Lab 200: Add TLS termination to your WAF
 
 In order to get the certificate signed by [Let's Encrypt](https://letsencrypt.org/) I used [certbot](https://certbot.eff.org/):
@@ -76,6 +85,8 @@ mv certbot-auto /usr/local/bin/certbot-auto
 /usr/local/bin/certbot-auto --nginx
 ```
 
+The certificates will be created and you can reuse them to set up your WAF. You will need your `fullchain.pem` and your `key.pem` file to configure HTTPS.
+
 ## Lab 300: Redirect traffic to WAF
 
 On your DNS server create a CNAME entry to create an alias from your domain to the WAF target DNS.
@@ -85,7 +96,34 @@ On the screnshot I am using an external DNS service to show you it is possible b
 
 ## Lab 400: Protect your endpoint
 
-**TODO** Test and check logs.
+Protection Rules to detect or block:
+![Protection Rules](./images/10.png)
+
+Recommendations proposed by WAF:
+![Protection Rules Recommendations](./images/11.png)
+
+Rules settings:
+![Protection Rules Settings](./images/12.png)
+
+### Access Control
+
+Access Control:
+![Access Control](./images/17.png)
+
+Add the details of your access rule:
+![Add Access Control](./images/18.png)
+
+Ready to publish:
+![Created Access Control](./images/19.png)
+
+20:
+![Created Access Control](./images/20.png)
+
+21:
+![Created Access Control](./images/21.png)
+
+22:
+![Created Access Control](./images/22.png)
 
 `curl -I https://api.example.com`
 
@@ -95,25 +133,25 @@ On the screnshot I am using an external DNS service to show you it is possible b
 
 For a up-to-date version, please go to [Offical WAF pricing](https://www.oracle.com/cloud/security/pricing.html)
 
-| Concept                                                    | Price  | Unit          |
-| :--------------------------------------------------------- | ------ | ------------- |
-| Oracle Cloud Infrastructure Identity and Access Management | Free   |               |
-| Oracle Cloud Infrastructure Audit                          | Free   |               |
-| Good Traffic                                               | \$0.15 | per Gb        |
-| Requests                                                   | \$0.60 | per 1 million |
-| Bot Management                                             | \$4.00 | per 1 million |
-| DDoS protection                                            | free   |               |
+| Concept                                                    | Price    | Unit          |
+| :--------------------------------------------------------- | -------- | ------------- |
+| Oracle Cloud Infrastructure Identity and Access Management | **Free** |               |
+| Oracle Cloud Infrastructure Audit                          | **Free** |               |
+| Good Traffic                                               | \$0.15   | per Gb        |
+| Requests                                                   | \$0.60   | per 1 million |
+| Bot Management                                             | \$4.00   | per 1 million |
+| DDoS protection                                            | **free** |               |
 
 ## OCI vs your responsibilities with WAF
 
-| Responsibility                                                             | Oracle | You |
-| -------------------------------------------------------------------------- | ------ | --- |
-| Onboard/configure the WAF policy for the web application                   | No     | Yes |
-| Configure WAF onboarding dependencies (DNS, ingress rules, network)        | No     | Yes |
-| Provide high availability (HA) for the WAF                                 | Yes    | No  |
-| Monitor for distributed denial of services (DDoS) attacks                  | Yes    | No  |
-| Keep WAF infrastructure patched and up-to-date                             | Yes    | No  |
-| Monitor data-plane logs for abnormal, undesired behaviour                  | Yes    | Yes |
-| Construct new rules based on new vulnerabilities and mitigations           | Yes    | No  |
-| Review and accept new recommended rules                                    | No     | Yes |
-| Tune the WAF's access rules and bot management strategies for your traffic | No     | Yes |
+| Responsibility                                                             | Oracle | You     |
+| -------------------------------------------------------------------------- | ------ | ------- |
+| Onboard/configure the WAF policy for the web application                   | No     | **Yes** |
+| Configure WAF onboarding dependencies (DNS, ingress rules, network)        | No     | **Yes** |
+| Provide high availability (HA) for the WAF                                 | Yes    | No      |
+| Monitor for distributed denial of services (DDoS) attacks                  | Yes    | No      |
+| Keep WAF infrastructure patched and up-to-date                             | Yes    | No      |
+| Monitor data-plane logs for abnormal, undesired behaviour                  | Yes    | **Yes** |
+| Construct new rules based on new vulnerabilities and mitigations           | Yes    | No      |
+| Review and accept new recommended rules                                    | No     | **Yes** |
+| Tune the WAF's access rules and bot management strategies for your traffic | No     | **Yes** |
