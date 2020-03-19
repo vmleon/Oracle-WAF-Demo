@@ -60,11 +60,34 @@ Fill out the details
 - Origin Name: descriptive (and unique name)
 - URI: IPv4 address or fully qualified domain name
 
-**TODO** Add HTTPS security.
+## Lab 200: Add TLS termination to your WAF
 
-**TODO** Update DNS with CNAME.
+In order to get the certificate signed by [Let's Encrypt](https://letsencrypt.org/) I used [certbot](https://certbot.eff.org/):
+
+Install certbot manually, but I recommend to use the installation from your distribution repository:
+
+> You might need `sudo` on some operations.
+
+```shell
+wget https://dl.eff.org/certbot-auto
+
+mv certbot-auto /usr/local/bin/certbot-auto
+
+/usr/local/bin/certbot-auto --nginx
+```
+
+## Lab 300: Redirect traffic to WAF
+
+On your DNS server create a CNAME entry to create an alias from your domain to the WAF target DNS.
+
+On the screnshot I am using an external DNS service to show you it is possible but the performace would be better with Oracle DNS Service:
+![CNAME entry](./images/cname.png)
+
+## Lab 400: Protect your endpoint
 
 **TODO** Test and check logs.
+
+`curl -I https://api.example.com`
 
 **TODO** Enable protection.
 
