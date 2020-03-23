@@ -43,7 +43,68 @@ Oracle Cloud Infrastructure WAF employs an intelligent DNS data-driven algorithm
 
 ![WAF schema](images/waf.png)
 
-## Lab 100: Create WAF Policy
+## Lab 100: Mock up a service
+
+If you don't have a HTTP service already, we can create a linux instance and start a web server.
+
+> You need a Virtual Cloud Network with a Public Subnet
+> You also need a public SSH key
+
+Go to **Menu** > **Compute** > **Instances** and click button **Create Instance**.
+
+**Name your instance:** service
+**Choose an operating system or image source:** Oracle Linux 7.7
+**Availability Domain:** pick any
+**Instance Shape:** VM.Standard.E2.1 (recommended)
+**Configure networking:** pick your existing Virtual Cloud Network and public subnet
+**Assign a public IP address** mark this radio button
+**Add SSH keys:** pick your public SSH key or paste it
+
+And click the button **Create**.
+
+After few minutes you will have your compute instance with a Public IP address we will use to SSH into. In your terminal:
+
+`ssh opc@<PUBLIC_IP>`
+
+Let's install NGINX as our Web Server. First update repos and then install it:
+
+`sudo yum update -y`
+
+`sudo yum install nginx -y`
+
+Time to start the server and check it is running
+
+`sudo systemctl start nginx`
+
+The service should ve **active**
+`systemctl status nginx`
+
+And we can get the index.html page
+`wget -O - localhost`
+
+We need to open the web server to the world, first allow port 80 on IPTABLES:
+
+`sudo firewall-cmd --zone=public --add-port=80/tcp --permanent`
+
+`sudo firewall-cmd --reload`
+
+That is not all, Oracle Cloud network implements its own security and by default only port 22 on TCP is open to allow SSH. It is also important to add port 80/tcp on Security List.
+
+Menu > Networking > Virtual Cloud Networks> and select the one used for the compute instance.
+
+On the small menu on the left bottom corner you will find **Security Lists**, click on the **Default Security List for your VCN**.
+
+![Security List](./images/netsec01.png)
+
+![Security List](./images/netset02.png)
+
+![Security List](./images/netset03.png)
+
+Check that web server is reachable with the public IP. Open your browser and go to your public ip address. You should see something like this:
+
+![Security List](./images/netset04.png)
+
+## Lab 200: Create WAF Policy
 
 From the Wec Console
 ![WAF Policy menu](./images/01.png)
