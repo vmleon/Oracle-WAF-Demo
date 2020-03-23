@@ -86,13 +86,17 @@ We need to open the web server to the world, first allow port 80 on IPTABLES:
 
 `sudo firewall-cmd --zone=public --add-port=80/tcp --permanent`
 
+Do the same for 443:
+
+`sudo firewall-cmd --zone=public --add-port=443/tcp --permanent`
+
 `sudo firewall-cmd --reload`
 
 That is not all, Oracle Cloud network implements its own security and by default only port 22 on TCP is open to allow SSH. It is also important to add port 80/tcp on Security List.
 
 Menu > Networking > Virtual Cloud Networks> and select the one used for the compute instance.
 
-On the small menu on the left bottom corner you will find **Security Lists**, click on the **Default Security List for your VCN**.
+On the small menu on the bottom left corner you will find **Security Lists**, click on the **Default Security List for your VCN**.
 
 ![Security List](./images/netsec01.png)
 
@@ -100,9 +104,12 @@ On the small menu on the left bottom corner you will find **Security Lists**, cl
 
 ![Security List](./images/netset03.png)
 
+Do the same for 443
+![Create WAF](./images/netsec04.png)
+
 Check that web server is reachable with the public IP. Open your browser and go to your public ip address. You should see something like this:
 
-![Security List](./images/netset04.png)
+![Security List](./images/netset05.png)
 
 ## Lab 200: Create WAF Policy
 
@@ -124,17 +131,17 @@ Fill out the details
 Wait for the WAF Policy to be active, it might take few minutes. Be patient.
 ![Active WAF policy](./images/04.png)
 
-Explore the menu on the bottom letf part of the WAF policy page to see Metrics
+Explore the menu on the bottom left part of the WAF policy page to see Metrics
 ![WAF metrics](./images/05.png)
 
 Origin Management
 ![WAF metrics](./images/06.png)
 
-## Lab 200: Add TLS termination to your WAF
+## Lab 300: Add TLS termination to your WAF
 
 In order to get the certificate signed by [Let's Encrypt](https://letsencrypt.org/) I used [certbot](https://certbot.eff.org/):
 
-Install certbot manually, but I recommend to use the installation from your distribution repository:
+Install certbot manually on your compute instance where we previously installed NGINX, but I recommend to use the installation from your distribution repository:
 
 > You might need `sudo` on some operations.
 
@@ -146,49 +153,67 @@ mv certbot-auto /usr/local/bin/certbot-auto
 /usr/local/bin/certbot-auto --nginx
 ```
 
-The certificates will be created and you can reuse them to set up your WAF. You will need your `fullchain.pem` and your `key.pem` file to configure HTTPS.
+After certbot negotiate the certificates with Let's Encrypt using ACME protocol, the certificates will be created on:
 
-## Lab 300: Redirect traffic to WAF
+`/etc/letsencrypt/live/api.example.com/*.pem`
 
-On your DNS server create a CNAME entry to create an alias from your domain to the WAF target DNS.
+Those are the files you need to set up your WAF. You will need `fullchain.pem` and `key.pem` file to configure HTTPS.
 
-On the screnshot I am using an external DNS service to show you it is possible but the performace would be better with Oracle DNS Service:
+## Lab 400: Redirect traffic to WAF
+
+On your DNS server create a CNAME entry to create an alias from your domain to the WAF target DNS. You can find the **CNAME target** on the detail page of your WAF policy
+
+![DNS target](./images/dnstarget.png)
+
+On the screnshot I am using an external DNS service to show you it is possible but I recommend to use Oracle DNS Service:
 ![CNAME entry](./images/cname.png)
 
-## Lab 400: Protect your endpoint
+## Lab 500: Protect your endpoint
 
-Protection Rules to detect or block:
+At this point you should be able to hit your service on the public IP address, and the CNAME target to hit your service through your WAF.
+
+It is time to protect your service applying rules.
+
+See how easy you can add **Protection Rules** to detect or block request:
 ![Protection Rules](./images/10.png)
 
-Recommendations proposed by WAF:
+WAF recommend protection rules as well
 ![Protection Rules Recommendations](./images/11.png)
 
-Rules settings:
+An configure how the rules are being applied:
 ![Protection Rules Settings](./images/12.png)
 
 ### Access Control
 
 Access Control:
+
+Access Control allow you to filter out request from specific locations, IP black and whitelisting, etc
 ![Access Control](./images/17.png)
 
-Add the details of your access rule:
+Try this example, depending on your current location, add the details of your access rule and send a request. In my case I'm _detecting_ but not blocking requests from a specific country.
 ![Add Access Control](./images/18.png)
 
-Ready to publish:
+All the changes goes into a staging state ready to publish when you are happy with all the settings you have change:
 ![Created Access Control](./images/19.png)
 
-20:
+Ready? From **Unpublished Changes** click the button **Publish All** or select the ones you want to apply now:
 ![Created Access Control](./images/20.png)
 
-21:
+Read the message, this changes will be applied securily and accross all the Point of Present around the globe and it might take few minutes, then confirm with **Publish All** button:
 ![Created Access Control](./images/21.png)
 
-22:
+The WAF Policy will go into updating state until the changes are applied:
 ![Created Access Control](./images/22.png)
+
+Time to check everything worked as expected
 
 `curl -I https://api.example.com`
 
-**TODO** Enable protection.
+You will see there are new headers on the request:
+
+`server: ZENEDGE` and `x-cdn: Served-By-Zenedge`
+
+![Headers](./images/23.png)
 
 ## Price
 
