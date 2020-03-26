@@ -1,16 +1,16 @@
 # Oracle WAF Demo
 
-Oracle Web Application Firewall is a cloud native offering to protect your HTTP traffic incoming to your infrastructure.
+Oracle Web Application Firewall is a cloud native offering to **protect your HTTP traffic** incoming to your infrastructure.
 
 Five reasons to have Oracle WAF protecting your system.
 
-1. They scale with your business.
-2. They block attacks outside your perimeter.
-3. They provide the best security for multicloud deployments.
-4. Managed services ease your burden.
-5. They have low total cost of ownership.
+1. They **scale** with your business.
+2. They block attacks **outside your perimeter**.
+3. They provide the best security for **multicloud** deployments.
+4. **Managed services** ease your burden.
+5. They have **low total cost of ownership**.
 
-Oracle Cloud Infrastructure WAF employs an intelligent DNS data-driven algorithm that determines the best global point of presence (POP) to serve a given user in real time. As a result, users are routed around global network issues and potential latency while offering the best possible uptime and service levels.
+Oracle Cloud Infrastructure WAF employs an intelligent DNS data-driven algorithm that determines the best **global point of presence (POP)** to serve a given user in real time. As a result, users are routed around global network issues and potential latency while offering the best possible uptime and service levels.
 
 ## Introduction
 
@@ -43,22 +43,25 @@ Oracle Cloud Infrastructure WAF employs an intelligent DNS data-driven algorithm
 
 ![WAF schema](images/waf.png)
 
-## Lab 100: Mock up a service
+---
+
+## Step 1: Mock up a service
 
 If you don't have a HTTP service already, we can create a linux instance and start a web server.
 
 > You need a Virtual Cloud Network with a Public Subnet
+>
 > You also need a public SSH key
 
 Go to **Menu** > **Compute** > **Instances** and click button **Create Instance**.
 
-**Name your instance:** service
-**Choose an operating system or image source:** Oracle Linux 7.7
-**Availability Domain:** pick any
-**Instance Shape:** VM.Standard.E2.1 (recommended)
-**Configure networking:** pick your existing Virtual Cloud Network and public subnet
-**Assign a public IP address** mark this radio button
-**Add SSH keys:** pick your public SSH key or paste it
+- **Name your instance:** service
+- **Choose an operating system or image source:** Oracle Linux 7.7
+- **Availability Domain:** pick any
+- **Instance Shape:** VM.Standard.E2.1 (recommended)
+- **Configure networking:** pick your existing Virtual Cloud Network and public subnet
+- **Assign a public IP address** mark this radio button
+- **Add SSH keys:** pick your public SSH key or paste it
 
 And click the button **Create**.
 
@@ -92,9 +95,9 @@ Do the same for 443:
 
 `sudo firewall-cmd --reload`
 
-That is not all, Oracle Cloud network implements its own security and by default only port 22 on TCP is open to allow SSH. It is also important to add port 80/tcp on Security List.
+That is not all, Oracle Cloud network implements its own security and by default only port 22 on TCP is open to allow SSH. It is also important to **add port 80/tcp on Security List**.
 
-Menu > Networking > Virtual Cloud Networks> and select the one used for the compute instance.
+**Menu** > **Networking** > **Virtual Cloud Networks** > and select the one used for the compute instance.
 
 On the small menu on the bottom left corner you will find **Security Lists**, click on the **Default Security List for your VCN**.
 
@@ -111,7 +114,9 @@ Check that web server is reachable with the public IP. Open your browser and go 
 
 ![Security List](./images/netset05.png)
 
-## Lab 200: Create WAF Policy
+---
+
+## Step 2: Create WAF Policy
 
 From the Wec Console
 ![WAF Policy menu](./images/01.png)
@@ -122,11 +127,11 @@ Create WAF Policy
 Fill out the details
 ![Create WAF Policy Details](./images/03.png)
 
-- Policy Names: A descriptive name for your policy
-- Primary Domain: your primary domain
-- Additions Domains: any additional domain, for example api\.example\.com
-- Origin Name: descriptive (and unique name)
-- URI: IPv4 address or fully qualified domain name
+- **Policy Names**: A descriptive name for your policy
+- **Primary Domain**: your primary domain
+- **Additions Domains**: any additional domain, for example api\.example\.com
+- **Origin Name**: descriptive (and unique name)
+- **URI**: IPv4 address or fully qualified domain name
 
 Wait for the WAF Policy to be active, it might take few minutes. Be patient.
 ![Active WAF policy](./images/04.png)
@@ -137,7 +142,9 @@ Explore the menu on the bottom left part of the WAF policy page to see Metrics
 Origin Management
 ![WAF metrics](./images/06.png)
 
-## Lab 300: Add TLS termination to your WAF
+---
+
+## Step 3: Add TLS termination to your WAF
 
 In order to get the certificate signed by [Let's Encrypt](https://letsencrypt.org/) I used [certbot](https://certbot.eff.org/):
 
@@ -159,7 +166,11 @@ After certbot negotiate the certificates with Let's Encrypt using ACME protocol,
 
 Those are the files you need to set up your WAF. You will need `fullchain.pem` and `key.pem` file to configure HTTPS.
 
-## Lab 400: Redirect traffic to WAF
+Add full chain of certificatates and private key to WAF. Go to **Settings** > **Edit**.
+
+---
+
+## Step 4: Redirect traffic to WAF
 
 On your DNS server create a CNAME entry to create an alias from your domain to the WAF target DNS. You can find the **CNAME target** on the detail page of your WAF policy
 
@@ -168,16 +179,42 @@ On your DNS server create a CNAME entry to create an alias from your domain to t
 On the screnshot I am using an external DNS service to show you it is possible but I recommend to use Oracle DNS Service:
 ![CNAME entry](./images/cname.png)
 
-## Lab 500: Protect your endpoint
+---
+
+## Step 5: Protect your endpoint
 
 At this point you should be able to hit your service on the public IP address, and the CNAME target to hit your service through your WAF.
 
 It is time to protect your service applying rules.
 
 See how easy you can add **Protection Rules** to detect or block request:
-![Protection Rules](./images/10.png)
+![Protection Rules](./images/protection_rules_1.png)
 
-WAF recommend protection rules as well
+Search for `981300` rule
+![Protection Rules](./images/protection_rules_2.png)
+
+Block this type of requests
+![Protection Rules](./images/protection_rules_3.png)
+
+![Protection Rules](./images/protection_rules_4.png)
+
+Search for `941100` rule
+![Protection Rules](./images/protection_rules_5.png)
+
+Block this type of requests as well
+![Protection Rules](./images/protection_rules_6.png)
+
+![Protection Rules](./images/protection_rules_7.png)
+
+On the WAF Policy detail page, click **Publish All (2)** button
+![Protection Rules](./images/protection_rules_8.png)
+
+Confirm with **Publish All** button
+![Protection Rules](./images/protection_rules_9.png)
+
+After few minutes the new rules will be provisioned on the distributed multi PoP WAF.
+
+You have also WAF recommend protection rules as well
 ![Protection Rules Recommendations](./images/11.png)
 
 An configure how the rules are being applied:
@@ -214,6 +251,8 @@ You will see there are new headers on the request:
 `server: ZENEDGE` and `x-cdn: Served-By-Zenedge`
 
 ![Headers](./images/23.png)
+
+---
 
 ## Price
 
