@@ -168,6 +168,28 @@ Those are the files you need to set up your WAF. You will need `fullchain.pem` a
 
 Add full chain of certificatates and private key to WAF. Go to **Settings** > **Edit**.
 
+![HTTPS Enable](images/https_1.png)
+
+Enable HTTPS support
+![HTTPS Enable](images/https_2.png)
+
+Attach `fullchain.pem` file and `key.pem` file
+![HTTPS Enable](images/https_3.png)
+
+Select HTTP to HTTPS Redirect and **Save**
+![HTTPS Enable](images/https_4.png)
+
+Publish the changes
+![HTTPS Enable](images/https_5.png)
+
+Click **Publish All** button
+![HTTPS Enable](images/https_6.png)
+
+Confirm
+![HTTPS Enable](images/https_7.png)
+
+Ready to next the step!
+
 ---
 
 ## Step 4: Redirect traffic to WAF
