@@ -45,9 +45,9 @@ Oracle Cloud Infrastructure WAF employs an intelligent DNS data-driven algorithm
 
 ---
 
-## Step 1: Mock up a service
+## Step 1: Mock up an endpoint
 
-If you don't have a HTTP service already, we can create a linux instance and start a web server.
+If you don't have a HTTP endpoint already, we can create a linux instance and start a web server.
 
 > You need a Virtual Cloud Network with a Public Subnet
 >
@@ -118,7 +118,7 @@ Check that web server is reachable with the public IP. Open your browser and go 
 
 ## Step 2: Create WAF Policy
 
-From the Wec Console
+From the Web Console
 ![WAF Policy menu](./images/01.png)
 
 Create WAF Policy
@@ -190,7 +190,7 @@ It is time to protect your service applying rules.
 See how easy you can add **Protection Rules** to detect or block request:
 ![Protection Rules](./images/protection_rules_1.png)
 
-Search for `981300` rule
+Search for `981300` rule for **SQL injection attacks**
 ![Protection Rules](./images/protection_rules_2.png)
 
 Block this type of requests
@@ -198,7 +198,7 @@ Block this type of requests
 
 ![Protection Rules](./images/protection_rules_4.png)
 
-Search for `941100` rule
+Search for `941100` rule for **XSS attacks**
 ![Protection Rules](./images/protection_rules_5.png)
 
 Block this type of requests as well
@@ -221,8 +221,6 @@ An configure how the rules are being applied:
 ![Protection Rules Settings](./images/12.png)
 
 ### Access Control
-
-Access Control:
 
 Access Control allow you to filter out request from specific locations, IP black and whitelisting, etc
 ![Access Control](./images/17.png)
